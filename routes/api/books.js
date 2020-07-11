@@ -20,4 +20,22 @@ router.get("/search/:query", async (req, res) => {
   }
 });
 
+/**
+ * @route   POST /api/books/rating
+ * @desc    Add a Rating for a Book
+ * @access  Private
+ */
+router.post("/rating", (req, res) => {
+  res.send("Endpoint to add rating");
+});
+
+/**
+ * @route   POST /api/books/review
+ * @desc    Add a Review for a Book
+ * @access  Private
+ */
+router.post("/review", (req, res) => {
+  res.send("Endpoint to add review");
+});
+
 module.exports = router;
