@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 /**
- * @route   POST /api/friends/add
+ * @route   POST /api/user/friends/add
  * @desc    Add Friend for User
  * @access  Private
  */
@@ -11,7 +11,7 @@ router.post("/add", (req, res) => {
 });
 
 /**
- * @route   POST /api/friends/remove
+ * @route   POST /api/user/friends/remove
  * @desc    Remove Friend from User
  * @access  Private
  */
