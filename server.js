@@ -10,8 +10,8 @@ app.get("/api/", (req, res) => {
   res.send("BookiAPI v" + require("./package.json").version);
 });
 
-// Authentication Endpoints
-app.use("/api/user/auth", require("./routes/api/auth"));
+// User Endpoints
+app.use("/api/user", require("./routes/api/user"));
 
 // Start Express Server
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
