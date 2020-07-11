@@ -19,8 +19,14 @@ app.use("/api/user/friends", require("./routes/api/friends"));
 // Books Endpoints
 app.use("/api/books", require("./routes/api/books"));
 
-// Groups Endpoints
+// Group Endpoints
+app.use("/api/groups", require("./routes/api/groups"));
+
+// Group Chat Endpoints
 app.use("/api/groups/chat", require("./routes/api/chat"));
+
+// Group Forum Endpoints
+app.use("/api/groups/forums", require("./routes/api/forums"));
 
 // Start Express Server
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

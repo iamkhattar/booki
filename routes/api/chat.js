@@ -2,16 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 /**
- * @route   POST /api/user/friends/remove
+ * @route   POST /api/groups/chat/message
  * @desc    Send Message to Group Chat
  * @access  Private
  */
 router.post("/message", (req, res) => {
-  res.send("Endpoint to Send Messages");
+  res.send("Endpoint to Send Messages to Group Chat Messages");
 });
 
 /**
- * @route   GET /api/groups/fetch
+ * @route   GET /api/groups/chat/fetch
  * @desc    Get Group Chat Messages
  * @access  Private
  */
