@@ -2,12 +2,12 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+//Middleware Initialisation
+app.use(express.json({ extended: false }));
+
 // Connecting to MongoDB
 const connectDB = require("./config/connectDB");
 connectDB();
-
-//Middleware Initialisation
-app.use(express.json({ extended: false }));
 
 // Default Endpoint
 app.get("/api/", (req, res) => {
