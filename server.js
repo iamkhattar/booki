@@ -7,12 +7,7 @@ app.use(express.json({ extended: false }));
 
 // Default Endpoint
 app.get("/api/", (req, res) => {
-  res.json({
-    name: "BookiAPI",
-    version: require("./package.json").version,
-    status: "Operational",
-    date: new Date(),
-  });
+  res.send("BookiAPI v" + require("./package.json").version);
 });
 
 // Users Endpoint
