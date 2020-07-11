@@ -54,4 +54,5 @@ router.post("/password", (req, res) => {
 router.post("/points", (req, res) => {
   res.send("Add Points to User Profile");
 });
+
 module.exports = router;

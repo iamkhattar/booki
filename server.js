@@ -13,5 +13,8 @@ app.get("/api/", (req, res) => {
 // User Endpoints
 app.use("/api/user", require("./routes/api/user"));
 
+// Friend Endpoints
+app.use("/api/friends", require("./routes/api/friend"));
+
 // Start Express Server
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
