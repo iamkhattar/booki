@@ -2,8 +2,8 @@ const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Connecting to MongoDB
 const connectDB = require("./config/connectDB");
-
 connectDB();
 
 //Middleware Initialisation
