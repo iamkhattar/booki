@@ -67,7 +67,7 @@ router.post(
         },
       };
 
-      // Generating and Send the JsonWebToken
+      // Generate and Send the JsonWebToken
       jwt.sign(
         payload,
         config.get("jwtToken"),
@@ -89,9 +89,65 @@ router.post(
  * @desc    Login a User
  * @access  Public
  */
-router.post("/login", (req, res) => {
-  res.send("Endpoint to Login A User");
-});
+router.post(
+  "/login",
+  [
+    check("email", "Please include a valid email").isEmail(),
+    check("password", "Password is required").exists(),
+  ],
+  async (req, res) => {
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Extracting Parameters from Request Body
+    const { email, password } = req.body;
+
+    try {
+      let user = await User.findOne({ email });
+
+      // Check if user is registered with the request email
+      if (!user) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid Credentials" }] });
+      }
+
+      // Check if password matches database
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      // If password is not a match send appropriate error
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid Credentials" }] });
+      }
+
+      // Prepare the Payload for JsonWebToken Generation
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      // Generate and Send the JsonWebToken
+      jwt.sign(
+        payload,
+        config.get("jwtToken"),
+        { expiresIn: "5 days" },
+        (err, token) => {
+          if (err) throw err;
+          return res.json({ token });
+        }
+      );
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).send("Server Error");
+    }
+  }
+);
 
 /**
  * @route   GET /api/user/fetch
