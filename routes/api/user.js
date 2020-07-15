@@ -184,6 +184,16 @@ router.post("/password", (req, res) => {
 });
 
 /**
+ * @route   GET /api/user/points
+ * @desc    Get Number of Points for a User
+ * @access  Private
+ */
+router.get("/points", (req, res) => {
+  res.send("Add Points to User Profile");
+});
+
+
+/**
  * @route   POST /api/user/points
  * @desc    Add Points to User Profile
  * @access  Private
