@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
   groups: [
     {
       group: mongoose.Schema.Types.ObjectId,
+      ref: 'group'
     },
   ],
   points: {
