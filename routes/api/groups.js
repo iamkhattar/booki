@@ -95,4 +95,23 @@ router.delete(
   }
 });
 
+/**
+ * @route   GET api/groups
+ * @desc    Get All Groups
+ * @access  Public
+ */
+
+router.get(
+  '/', 
+  async (req, res) => {
+  try {
+    const group = await Group.find();
+    if (!group) throw Error('No groups');
+
+    res.status(200).json(group);
+  } catch (e) {
+    res.status(400).json({ msg: e.message });
+  }
+});
+
 module.exports = router;
