@@ -1,11 +1,6 @@
 const mongoose = require("mongoose");
 
 const GroupSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   name: {
     type: String,
     required: true,
@@ -21,12 +16,17 @@ const GroupSchema = new mongoose.Schema({
   ],
   messages: [
     {
+      message: {
         type: String,
-    }
+      },
+    },
   ],
   currentBook: {
     book: mongoose.Schema.Types.ObjectId,
-    required: true
+  },
+  date: {
+    type: Date,
+    default: Date.now,
   },
 });
 
