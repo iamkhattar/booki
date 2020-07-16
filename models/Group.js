@@ -27,7 +27,7 @@ const GroupSchema = new mongoose.Schema({
     }
   ],
   currentBook: {
-    user: mongoose.Schema.Types.ObjectId,
+    book: mongoose.Schema.Types.ObjectId,
     required: true
   },
 });
