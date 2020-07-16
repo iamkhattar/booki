@@ -27,8 +27,8 @@ const GroupSchema = new mongoose.Schema({
     }
   ],
   currentBook: {
-    type: Date,
-    default: Date.now,
+    user: mongoose.Schema.Types.ObjectId,
+    required: true
   },
 });
 
