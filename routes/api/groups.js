@@ -40,4 +40,28 @@ router.post(
   }
 );
 
+/**
+ * @route   DELETE api/group/:id
+ * @desc    Delete A Group
+ * @access  Private
+ */
+
+router.delete(
+  '/:id', 
+  auth, async (req, res) => {
+  try {
+    const group = await Group.findById(req.params.id);
+    if (!group) throw Error('No groups found');
+
+    const removed = await group.remove();
+    if (!removed)
+      throw Error('Something went wrong while trying to delete this group');
+
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(400).json({ msg: e.message, success: false });
+  }
+});
+
+
 module.exports = router;
