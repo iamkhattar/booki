@@ -13,12 +13,10 @@ const GroupSchema = new mongoose.Schema({
   admin: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'user'
   },
   members: [
     {
       user: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
     },
   ],
   messages: [

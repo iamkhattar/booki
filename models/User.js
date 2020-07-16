@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const UserSchema = new mongoose.Schema({
   email: {
     type: String,
@@ -28,7 +27,6 @@ const UserSchema = new mongoose.Schema({
   groups: [
     {
       group: mongoose.Schema.Types.ObjectId,
-      ref: 'group'
     },
   ],
   points: {
