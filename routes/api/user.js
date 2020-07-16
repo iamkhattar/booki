@@ -189,7 +189,7 @@ router.post("/password", (req, res) => {
  * @access  Private
  */
 router.get("/points", (req, res) => {
-  res.send("Add Points to User Profile");
+  res.send("Get Number of Points for a User");
 });
 
 
