@@ -31,7 +31,7 @@ router.post(
       //Save the Group
       const user = await User.findById(req.user.id);
       user.groups.unshift({ group: group._id });
-      group.members.unshift({user: user._id});
+      group.members.unshift({ user: user._id });
       await user.save();
       await group.save();
       return res.json(group);
@@ -121,15 +121,18 @@ router.put("/addMember",
     try {
       const { userID } = req.body;
       const { groupID } = req.body;
-
-      //  get the
       const group = await Group.findById(groupID);
-
-      // get the user 
       let user = await User.findById(userID);
-      // get the list of groups from the user
       let groupList = user.groups;
-      if (!groupList.includes(group)) {
+      let member = false;
+
+      for (let i = 0; i < groupList.length; i++) {
+        if (groupList[i].group == groupID) {
+          member = true;
+        }
+      }
+
+      if (!member) {
         // add to group
         user.groups.unshift({ group: group._id });
         group.members.unshift({ user: user._id });
@@ -137,6 +140,10 @@ router.put("/addMember",
         await group.save();
         return res.json(group);
       }
+      else {
+        return res.status(500).send("Already a member");
+      }
+
       res.status(200).json({ success: true });
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
