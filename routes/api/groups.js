@@ -86,31 +86,14 @@ router.delete(
       let groupID = req.params.id;
       const group = await Group.findById(groupID);
 
-      // get the user who is admin
-      let admin = await User.findById(group.admin);
-
-      // get the list of groups from the user
-      let groupList = admin.groups;
-      let removeFromUser = false;
-
-      // loop throuhg the list and remove the group that is being deleted
-      for (let i = 0; i < groupList.length; i++) {
-        if (groupList[i].group == groupID) {
-          groupList.splice(i, 1);
-          removeFromUser = true;
-          await admin.save();
-        }
-      }
-
       // remove the group for all members
       let memberList = group.members;
       for (let i = 0; i < memberList.length; i++) {
-        let user = await User.findById(group.members[i]);
+        let user = await User.findById(group.members[i].user);
         let groupList = user.groups;
         for (let j = 0; j < groupList.length; j++) {
           if (groupList[j].group == groupID) {
             groupList.splice(j, 1);
-            removeFromUser = true;
             await user.save();
           }
         }
@@ -118,7 +101,7 @@ router.delete(
 
       if (!group) throw Error('No groups found');
       const removed = await group.remove();
-      if (!removed || !removeFromUser)
+      if (!removed)
         throw Error('Something went wrong while trying to delete this group');
 
       res.status(200).json({ success: true });
