@@ -31,6 +31,7 @@ router.post(
       //Save the Group
       const user = await User.findById(req.user.id);
       user.groups.unshift({ group: group._id });
+      group.members.unshift({user: user._id});
       await user.save();
       await group.save();
       return res.json(group);
@@ -120,6 +121,39 @@ router.delete(
       if (!removed || !removeFromUser)
         throw Error('Something went wrong while trying to delete this group');
 
+      res.status(200).json({ success: true });
+    } catch (e) {
+      res.status(400).json({ msg: e.message, success: false });
+    }
+  });
+
+/**
+* @route   PUT api/group/addMember
+* @desc    Add a user to a group
+* @access  Private
+*/
+
+router.put("/addMember",
+  auth, async (req, res) => {
+    try {
+      const { userID } = req.body;
+      const { groupID } = req.body;
+
+      //  get the
+      const group = await Group.findById(groupID);
+
+      // get the user 
+      let user = await User.findById(userID);
+      // get the list of groups from the user
+      let groupList = user.groups;
+      if (!groupList.includes(group)) {
+        // add to group
+        user.groups.unshift({ group: group._id });
+        group.members.unshift({ user: user._id });
+        await user.save();
+        await group.save();
+        return res.json(group);
+      }
       res.status(200).json({ success: true });
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
