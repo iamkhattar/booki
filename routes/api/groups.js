@@ -49,7 +49,7 @@ router.put("/rename",
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("name", "Please include a group name").not().isEmpty()]
-  ], async(req, res) => {
+  ], async (req, res) => {
 
     // Request Validation
     const errors = validationResult(req);
@@ -72,28 +72,59 @@ router.put("/rename",
 
   });
 
-  /**
- * @route   DELETE api/group/:id
- * @desc    Delete A Group
- * @access  Private
- */
+/**
+* @route   DELETE api/group/:id
+* @desc    Delete A Group
+* @access  Private
+*/
 
 router.delete(
-  '/:id', 
+  '/:id',
   auth, async (req, res) => {
-  try {
-    const group = await Group.findById(req.params.id);
-    if (!group) throw Error('No groups found');
+    try {
+      let groupID = req.params.id;
+      const group = await Group.findById(groupID);
 
-    const removed = await group.remove();
-    if (!removed)
-      throw Error('Something went wrong while trying to delete this group');
+      // get the user who is admin
+      let admin = await User.findById(group.admin);
 
-    res.status(200).json({ success: true });
-  } catch (e) {
-    res.status(400).json({ msg: e.message, success: false });
-  }
-});
+      // get the list of groups from the user
+      let groupList = admin.groups;
+      let removeFromUser = false;
+
+      // loop throuhg the list and remove the group that is being deleted
+      for (let i = 0; i < groupList.length; i++) {
+        if (groupList[i].group == groupID) {
+          groupList.splice(i, 1);
+          removeFromUser = true;
+          await admin.save();
+        }
+      }
+
+      // remove the group for all members
+      let memberList = group.members;
+      for (let i = 0; i < memberList.length; i++) {
+        let user = await User.findById(group.members[i]);
+        let groupList = user.groups;
+        for (let j = 0; j < groupList.length; j++) {
+          if (groupList[j].group == groupID) {
+            groupList.splice(j, 1);
+            removeFromUser = true;
+            await user.save();
+          }
+        }
+      }
+
+      if (!group) throw Error('No groups found');
+      const removed = await group.remove();
+      if (!removed || !removeFromUser)
+        throw Error('Something went wrong while trying to delete this group');
+
+      res.status(200).json({ success: true });
+    } catch (e) {
+      res.status(400).json({ msg: e.message, success: false });
+    }
+  });
 
 /**
  * @route   GET api/groups
@@ -102,16 +133,16 @@ router.delete(
  */
 
 router.get(
-  '/', 
+  '/',
   async (req, res) => {
-  try {
-    const group = await Group.find();
-    if (!group) throw Error('No groups');
+    try {
+      const group = await Group.find();
+      if (!group) throw Error('No groups');
 
-    res.status(200).json(group);
-  } catch (e) {
-    res.status(400).json({ msg: e.message });
-  }
-});
+      res.status(200).json(group);
+    } catch (e) {
+      res.status(400).json({ msg: e.message });
+    }
+  });
 
 module.exports = router;
