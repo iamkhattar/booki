@@ -134,6 +134,7 @@ router.put("/leave",
       let memberList = group.members;
       let user = await User.findById(userID);
       let groupList = user.groups;
+    
       for (let i = 0; i < groupList.length; i++) {
         if (groupList[i].group == groupID) {
           groupList.splice(i, 1);
