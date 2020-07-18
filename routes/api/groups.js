@@ -259,7 +259,7 @@ router.get('/book',
 * @desc    set the current book
 * @access  Private
 */
-router.put('/book',
+router.get('/book',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("bookID", "Please include the book ID").not().isEmpty()]
