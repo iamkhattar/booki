@@ -130,30 +130,30 @@ router.put("/leave",
       const { groupID } = req.body;
 
       // console.log(await Group.findById(groupID));
-      
+
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
 
-      if(!group){
+      if (!group) {
         return res.status(500).send("Not a valid group");
       }
       let memberList = group.members;
 
-      if(!user){
+      if (!user) {
         return res.status(500).send("Not a valid user");
       }
       let groupList = user.groups;
 
       let member = false;
-    
+
       for (let i = 0; i < groupList.length; i++) {
         if (groupList[i].group == groupID) {
           groupList.splice(i, 1);
-          member =true;
+          member = true;
           await user.save();
         }
       }
-      if(!member){
+      if (!member) {
         return res.status(500).send("User is not a member of this group");
       }
 
@@ -228,5 +228,56 @@ router.get(
       res.status(400).json({ msg: e.message });
     }
   });
+
+/**
+* @route   GET /api/groups/book
+* @desc    get the current book
+* @access  Private
+*/
+router.get('/book',
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()]
+  ], async (req, res) => {
+    try {
+      const { groupID } = req.body;
+      const group = await Group.findById(groupID);
+      console.log("current book:"+group.currentBook+";")
+      if (group.currentBook == '{}') {
+        return res.status(500).send("No current book");
+      }
+      else {
+        return res.status(200).send(group.currentBook);
+      }
+    } catch{
+      return res.status(500).send("server error");
+    }
+  }
+);
+
+/**
+* @route   PUT /api/groups/book
+* @desc    set the current book
+* @access  Private
+*/
+router.put('/book',
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()],
+    [check("bookID", "Please include the book ID").not().isEmpty()]
+  ], async (req, res) => {
+    try {
+      const { groupID } = req.body;
+      const group = await Group.findById(groupID);
+      console.log("current book:"+group.currentBook+";")
+      if (group.currentBook == '{}') {
+        return res.status(500).send("No current book");
+      }
+      else {
+        return res.status(200).send(group.currentBook);
+      }
+    } catch{
+      return res.status(500).send("server error");
+    }
+  }
+);
 
 module.exports = router;
