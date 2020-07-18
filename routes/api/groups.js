@@ -43,7 +43,7 @@ router.post(
 
 /**
  * @route   PUT /api/groups/rename
- * @desc    Change Password for a User
+ * @desc    rename a group
  * @access  Private
  */
 router.put("/rename",
@@ -81,7 +81,9 @@ router.put("/rename",
 
 router.delete(
   '/:id',
-  auth, async (req, res) => {
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()]],
+  async (req, res) => {
     try {
       let groupID = req.params.id;
       const group = await Group.findById(groupID);
@@ -109,6 +111,48 @@ router.delete(
       res.status(400).json({ msg: e.message, success: false });
     }
   });
+
+
+/**
+* @route   PUT api/group/leave
+* @desc    Remove user from group
+* @access  Private
+*/
+
+router.put("/leave",
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()],
+    [check("userID", "Please include the user ID").not().isEmpty()]
+  ], async (req, res) => {
+    try {
+
+      const { userID } = req.body;
+      const { groupID } = req.body;
+      const group = await Group.findById(groupID);
+
+      // remove the group for all members
+      let memberList = group.members;
+      let user = await User.findById(userID);
+      let groupList = user.groups;
+      for (let i = 0; i < groupList.length; i++) {
+        if (groupList[i].group == groupID) {
+          groupList.splice(i, 1);
+          await user.save();
+        }
+      }
+
+      for (let i = 0; i < memberList.length; i++) {
+        if (memberList[i].user == userID) {
+          memberList.splice(i, 1);
+          await group.save();
+        }
+      }
+      res.status(200).json({ success: true });
+    } catch (e) {
+      res.status(400).json({ msg: e.message, success: false });
+    }
+  });
+
 
 /**
 * @route   PUT api/group/addMember
