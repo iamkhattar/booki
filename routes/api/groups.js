@@ -128,18 +128,33 @@ router.put("/leave",
 
       const { userID } = req.body;
       const { groupID } = req.body;
-      const group = await Group.findById(groupID);
 
-      // remove the group for all members
+      // console.log(await Group.findById(groupID));
+      
+      const group = await Group.findById(groupID);
+      const user = await User.findById(userID);
+
+      if(!group){
+        return res.status(500).send("Not a valid group");
+      }
       let memberList = group.members;
-      let user = await User.findById(userID);
+
+      if(!user){
+        return res.status(500).send("Not a valid user");
+      }
       let groupList = user.groups;
+
+      let member = false;
     
       for (let i = 0; i < groupList.length; i++) {
         if (groupList[i].group == groupID) {
           groupList.splice(i, 1);
+          member =true;
           await user.save();
         }
+      }
+      if(!member){
+        return res.status(500).send("User is not a member of this group");
       }
 
       for (let i = 0; i < memberList.length; i++) {
