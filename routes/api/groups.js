@@ -136,9 +136,6 @@ router.put("/leave",
 
       const { userID } = req.body;
       const { groupID } = req.body;
-
-      // console.log(await Group.findById(groupID));
-
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
 
@@ -194,25 +191,42 @@ router.put("/addMember",
       let groupList = user.groups;
       let member = false;
 
-      for (let i = 0; i < groupList.length; i++) {
-        if (groupList[i].group == groupID) {
-          member = true;
+
+      // only a current member should be able to add more members
+
+      let currentUser = req.user.id;
+      let authorised = false;
+
+      for (let i = 0; i < group.members.length; i++) {
+        if (group.members[i].user == currentUser) {
+          authorised = true;
         }
       }
 
-      if (!member) {
-        // add to group
-        user.groups.unshift({ group: group._id });
-        group.members.unshift({ user: user._id });
-        await user.save();
-        await group.save();
-        return res.json(group);
+      if(authorised){
+        for (let i = 0; i < groupList.length; i++) {
+          if (groupList[i].group == groupID) {
+            member = true;
+          }
+        }
+  
+        if (!member) {
+          // add to group
+          user.groups.unshift({ group: group._id });
+          group.members.unshift({ user: user._id });
+          await user.save();
+          await group.save();
+          return res.json(group);
+        }
+        else {
+          return res.status(500).send("Already a member");
+        }
+  
+        res.status(200).json({ success: true });
+      }else{
+        return res.status(500).send("User not authorised to add members to this group");
       }
-      else {
-        return res.status(500).send("Already a member");
-      }
-
-      res.status(200).json({ success: true });
+      
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
     }
@@ -249,7 +263,6 @@ router.get('/book',
     try {
       const { groupID } = req.body;
       const group = await Group.findById(groupID);
-      console.log("current book:" + group.currentBook + ";")
       if (group.currentBook == '{}') {
         return res.status(500).send("No current book");
       }
@@ -275,7 +288,6 @@ router.get('/book',
     try {
       const { groupID } = req.body;
       const group = await Group.findById(groupID);
-      console.log("current book:" + group.currentBook + ";")
       if (group.currentBook == '{}') {
         return res.status(500).send("No current book");
       }
