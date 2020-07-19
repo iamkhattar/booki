@@ -203,13 +203,13 @@ router.put("/addMember",
         }
       }
 
-      if(authorised){
+      if (authorised) {
         for (let i = 0; i < groupList.length; i++) {
           if (groupList[i].group == groupID) {
             member = true;
           }
         }
-  
+
         if (!member) {
           // add to group
           user.groups.unshift({ group: group._id });
@@ -221,12 +221,12 @@ router.put("/addMember",
         else {
           return res.status(500).send("Already a member");
         }
-  
+
         res.status(200).json({ success: true });
-      }else{
+      } else {
         return res.status(500).send("User not authorised to add members to this group");
       }
-      
+
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
     }
@@ -280,21 +280,20 @@ router.get('/book',
 * @desc    set the current book
 * @access  Private
 */
-router.get('/book',
+router.put('/book',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("bookID", "Please include the book ID").not().isEmpty()]
   ], async (req, res) => {
     try {
       const { groupID } = req.body;
+      const { bookID } = req.body;
       const group = await Group.findById(groupID);
-      if (group.currentBook == '{}') {
-        return res.status(500).send("No current book");
-      }
-      else {
-        return res.status(200).send(group.currentBook);
-      }
-    } catch{
+      group.currentBook = bookID;
+      // group.save();
+      return res.json(group);
+    }
+    catch{
       return res.status(500).send("server error");
     }
   }
