@@ -86,27 +86,35 @@ router.delete(
   async (req, res) => {
     try {
       let groupID = req.params.id;
-      const group = await Group.findById(groupID);
 
-      // remove the group for all members
-      let memberList = group.members;
-      for (let i = 0; i < memberList.length; i++) {
-        let user = await User.findById(group.members[i].user);
-        let groupList = user.groups;
-        for (let j = 0; j < groupList.length; j++) {
-          if (groupList[j].group == groupID) {
-            groupList.splice(j, 1);
-            await user.save();
+      const group = await Group.findById(groupID);
+      let adminID = group.admin;
+      let currentUser = req.user.id;
+
+      if (currentUser != adminID) {
+        return res.status(500).send("User does not have permission");
+      } else {
+
+        // remove the group for all members
+        let memberList = group.members;
+        for (let i = 0; i < memberList.length; i++) {
+          let user = await User.findById(group.members[i].user);
+          let groupList = user.groups;
+          for (let j = 0; j < groupList.length; j++) {
+            if (groupList[j].group == groupID) {
+              groupList.splice(j, 1);
+              await user.save();
+            }
           }
         }
+
+        if (!group) throw Error('No groups found');
+        const removed = await group.remove();
+        if (!removed)
+          throw Error('Something went wrong while trying to delete this group');
+
+        res.status(200).json({ success: true });
       }
-
-      if (!group) throw Error('No groups found');
-      const removed = await group.remove();
-      if (!removed)
-        throw Error('Something went wrong while trying to delete this group');
-
-      res.status(200).json({ success: true });
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
     }
@@ -241,7 +249,7 @@ router.get('/book',
     try {
       const { groupID } = req.body;
       const group = await Group.findById(groupID);
-      console.log("current book:"+group.currentBook+";")
+      console.log("current book:" + group.currentBook + ";")
       if (group.currentBook == '{}') {
         return res.status(500).send("No current book");
       }
@@ -267,7 +275,7 @@ router.get('/book',
     try {
       const { groupID } = req.body;
       const group = await Group.findById(groupID);
-      console.log("current book:"+group.currentBook+";")
+      console.log("current book:" + group.currentBook + ";")
       if (group.currentBook == '{}') {
         return res.status(500).send("No current book");
       }
