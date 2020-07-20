@@ -129,15 +129,13 @@ router.delete(
 
 router.put("/leave",
   [auth,
-    [check("groupID", "Please include the group ID").not().isEmpty()],
-    [check("userID", "Please include the user ID").not().isEmpty()]
+    [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
     try {
 
-      const { userID } = req.body;
       const { groupID } = req.body;
       const group = await Group.findById(groupID);
-      const user = await User.findById(userID);
+      const user = await User.findById(req.user.id);
 
       if (!group) {
         return res.status(500).send("Not a valid group");
@@ -269,6 +267,7 @@ router.get(
       res.status(400).json({ msg: e.message });
     }
   });
+  
 
 /**
 * @route   GET /api/groups/book
