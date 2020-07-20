@@ -251,6 +251,25 @@ router.get(
     }
   });
 
+  /**
+ * @route   GET api/groups/fetch
+ * @desc    Get a users Groups
+ * @access  Private
+ */
+
+router.get(
+  '/fetch',auth,
+  async (req, res) => {
+    try {
+      const user = await User.findById(req.user.id);
+      let groups = user.groups;
+    
+      res.status(200).json(groups);
+    } catch (e) {
+      res.status(400).json({ msg: e.message });
+    }
+  });
+
 /**
 * @route   GET /api/groups/book
 * @desc    get the current book
