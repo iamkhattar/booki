@@ -7,33 +7,6 @@ const User = require("../../models/User");
 
 const router = express.Router();
 
-// /**
-//  * @route   POST /api/user/friends/addFriend
-//  * @desc    Add Friend for User
-//  * @access  Private
-//  */
-// router.patch("/addFriend/:id",   [auth,
-//   [check("idToAdd", "Please include the UserID of the user you wish to add as a friend").not().isEmpty()]], 
-//   async (req, res) => {
-//   const { id } = req.body;
-
-//   try {
-//     await User.findByIdAndUpdate(
-//       id, 
-//       { $addToSet: {friends: req.body.idToAdd} },
-//       { new: true, upsert: true },
-//       (err, doc) => {
-//         if (err) {
-//           return res.status(400).json(err);
-//         }
-//         return res.status(201).json(doc);
-//       }
-//     );
-//   } catch (e) {
-//     return res.status(500).json(err);
-//   }
-// });
-
 /**
 * @route   PUT /api/user/friends/addFriend
 * @desc    Add a Friend for a User
