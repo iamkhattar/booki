@@ -172,6 +172,66 @@ router.put("/leave",
     }
   });
 
+  /**
+* @route   PUT api/group/remove
+* @desc    Remove user from group
+* @access  Private
+*/
+
+router.put("/remove",
+[auth,
+  [check("groupID", "Please include the group ID").not().isEmpty()],
+  [check("userID", "Please include the user ID").not().isEmpty()]
+], async (req, res) => {
+  try {
+
+    const { groupID } = req.body;
+    const { userID } = req.body;
+    const group = await Group.findById(groupID);
+    const user = await User.findById(userID);
+
+    let admin = false;
+    let currentUser = req.user.id;
+  
+    if (!group) {
+      return res.status(500).send("Not a valid group");
+    }
+
+    if(!(currentUser == group.admin)){
+      return res.status(500).send("not authorised");
+    }
+    let memberList = group.members;
+
+    if (!user) {
+      return res.status(500).send("Not a valid user");
+    }
+    let groupList = user.groups;
+
+    let member = false;
+
+    for (let i = 0; i < groupList.length; i++) {
+      if (groupList[i].group == groupID) {
+        groupList.splice(i, 1);
+        member = true;
+        await user.save();
+      }
+    }
+    if (!member) {
+      return res.status(500).send("User is not a member of this group");
+    }
+
+    for (let i = 0; i < memberList.length; i++) {
+      if (memberList[i].user == userID) {
+        memberList.splice(i, 1);
+        await group.save();
+      }
+    }
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(400).json({ msg: e.message, success: false });
+  }
+});
+
 
 /**
 * @route   PUT api/group/addMember
