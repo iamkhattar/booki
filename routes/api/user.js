@@ -151,11 +151,11 @@ router.post(
 );
 
 /**
- * @route   GET /api/user/fetch
+ * @route   GET /api/user/
  * @desc    Get a Users Details
  * @access  Private
  */
-router.get("/fetch", auth, async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     res.json(user);
@@ -170,9 +170,62 @@ router.get("/fetch", auth, async (req, res) => {
  * @desc    Change Password for a User
  * @access  Private
  */
-router.put("/password", (req, res) => {
-  res.send("Endpoint to Change Password");
-});
+router.put(
+  "/password",
+  [
+    auth,
+    [
+      check(
+        "password",
+        "Please enter a password with 6 or more characters"
+      ).isLength({ min: 6 }),
+    ],
+  ],
+  async (req, res) => {
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { password } = req.body;
+
+    try {
+      // Find User in DB
+      const user = await User.findById(req.user.id);
+
+      // Change User Password
+      user.password = password;
+
+      // Hashing and Salting the password
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+
+      // Save the User in Database
+      await user.save();
+
+      // Prepare the Payload for JsonWebToken Generation
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+
+      // Generate and Send the JsonWebToken
+      jwt.sign(
+        payload,
+        config.get("jwtToken"),
+        { expiresIn: "5 days" },
+        (err, token) => {
+          if (err) throw err;
+          res.json({ token });
+        }
+      );
+    } catch (err) {
+      return res.status(500).send("Server Error");
+    }
+  }
+);
 
 /**
  * @route   POST /api/user/password
@@ -181,25 +234,6 @@ router.put("/password", (req, res) => {
  */
 router.post("/password", (req, res) => {
   res.send("Endpoint to Forget Password");
-});
-
-/**
- * @route   GET /api/user/points
- * @desc    Get Number of Points for a User
- * @access  Private
- */
-router.get("/points", (req, res) => {
-  res.send("Get Number of Points for a User");
-});
-
-
-/**
- * @route   POST /api/user/points
- * @desc    Add Points to User Profile
- * @access  Private
- */
-router.post("/points", (req, res) => {
-  res.send("Add Points to User Profile");
 });
 
 module.exports = router;
