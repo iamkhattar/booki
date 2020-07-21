@@ -24,15 +24,6 @@ router.get("/search/:query", async (req, res) => {
 });
 
 /**
- * @route   POST /api/books/rating
- * @desc    Add a Rating for a Book
- * @access  Private
- */
-router.post("/rating", (req, res) => {
-  res.send("Endpoint to add rating");
-});
-
-/**
  * @route   POST /api/books/review
  * @desc    Add a Review for a Book
  * @access  Private
@@ -90,7 +81,7 @@ router.post("/review", auth, async (req, res) => {
  * @desc    Add an unseen Book
  * @access  Private
  */
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
 
   const { isbn } = req.body;
 
@@ -114,5 +105,21 @@ router.post("/add", async (req, res) => {
   }
 
 });
+
+/**
+ * @route   get /api/books/review
+ * @desc    get a Reviews for a Book
+ * @access  Public
+ */
+router.get("/review",async(req,res) => {
+  const {isbn} = req.body;
+  let book = await Book.findOne({ isbn: isbn });
+
+  if (book) {
+    return res.status(200).json(book.reviews);
+  } else {
+    return res.status(500).send("book not in system");
+  }
+})
 
 module.exports = router;
