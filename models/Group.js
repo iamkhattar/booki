@@ -24,6 +24,10 @@ const GroupSchema = new mongoose.Schema({
   currentBook: {
     book: mongoose.Schema.Types.ObjectId,
   },
+  previousBooks: [{
+    book: mongoose.Schema.Types.ObjectId,
+  }
+  ],
   date: {
     type: Date,
     default: Date.now,

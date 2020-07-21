@@ -340,13 +340,53 @@ router.get('/book',
   ], async (req, res) => {
     try {
       const { groupID } = req.body;
+      const userID = req.user.id;
       const group = await Group.findById(groupID);
-      if (group.currentBook == '{}') {
-        return res.status(500).send("No current book");
+
+      let member = userChecking(group, userID);
+      if (member){
+        if (group.currentBook == '{}') {
+          return res.status(500).send("No current book");
+        }
+        else {
+          return res.status(200).send(group.currentBook);
+        }
+      }else{
+        return res.status(500).send("not a member");
       }
-      else {
-        return res.status(200).send(group.currentBook);
+     
+    } catch{
+      return res.status(500).send("server error");
+    }
+  }
+);
+
+/**
+* @route   GET /api/groups/previousBooks
+* @desc    get the current book
+* @access  Private
+*/
+router.get('/previousBooks',
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()]
+  ], async (req, res) => {
+    try {
+      const { groupID } = req.body;
+      const userID = req.user.id;
+      const group = await Group.findById(groupID);
+
+      let member = userChecking(group, userID);
+      if (member){
+        if (group.currentBook == '{}') {
+          return res.status(500).send("No current book");
+        }
+        else {
+          return res.status(200).send(group.previousBooks);
+        }
+      }else{
+        return res.status(500).send("not a member");
       }
+     
     } catch{
       return res.status(500).send("server error");
     }
@@ -369,26 +409,18 @@ router.put('/book',
     const group = await Group.findById(groupID);
 
     // check group is real
-    if(!group){
+    if (!group) {
       return res.status(500).send("server error");
     }
 
-    let groupMembers = group.members;
-    let member = false;
-
-    // only member can change a book groups book
-    for (let i = 0; i < groupMembers.length; i++) {
-      if (groupMembers[i].user == userID) {
-        member = true;
-      }
-    }
+    let member = userChecking(group, userID);
     if (member) {
 
       try {
         // find the book
         let book = await Book.findById(bookID);
-        console.log(group.currentBook );
-        group.currentBook = {book: book._id};
+        console.log(group.currentBook);
+        group.currentBook = { book: book._id };
 
         await group.save();
         return res.json(group);
@@ -397,10 +429,61 @@ router.put('/book',
         return res.status(500).send("server error");
       }
     }
-    else{
+    else {
       return res.status(500).send("user not authorised")
     }
   }
 );
+
+/**
+* @route   PUT /api/groups/previousBook
+* @desc    add a previous book
+* @access  Private
+*/
+
+// should you be able to read the same book twice?
+router.put('/previousBook',
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()],
+    [check("bookID", "Please include the book ID").not().isEmpty()]
+  ], async (req, res) => {
+    let userID = req.user.id;
+    const { groupID } = req.body;
+    const { bookID } = req.body;
+    const group = await Group.findById(groupID);
+
+    let member = userChecking(group, userID);
+    if (member) {
+      try {
+        // find the book
+        let book = await Book.findById(bookID);
+        group.previousBooks.unshift({ book: book._id });
+
+        await group.save();
+        return res.json(group);
+      }
+      catch{
+        return res.status(500).send("server error");
+      }
+    }
+    else {
+      return res.status(500).send("user not authorised")
+    }
+  }
+);
+
+let userChecking = function (group, userID) {
+  let groupMembers = group.members;
+  let member = false;
+
+  // only member can change a book groups book
+  for (let i = 0; i < groupMembers.length; i++) {
+    if (groupMembers[i].user == userID) {
+      member = true;
+    }
+  }
+
+  return member;
+}
 
 module.exports = router;
