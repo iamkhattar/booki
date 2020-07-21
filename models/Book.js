@@ -7,6 +7,7 @@ const BookSchema = new mongoose.Schema({
     },
     reviews: [
         {
+            userID:  mongoose.Schema.Types.ObjectId,
             message: {
                 type: String,
             },
