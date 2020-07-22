@@ -63,8 +63,18 @@ router.put("/rename",
     const { groupID } = req.body;
 
     try {
-      const group = await Group.findById(groupID);
-      group.name = name;
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+      let adminID = group.admin;
+      let currentUser = req.user.id;
+
+      if (currentUser != adminID) {
+        return res.status(500).send("User does not have permission");
+      } else
+
+        group.name = name;
       await group.save();
       return res.json(group);
     } catch (err) {
@@ -81,8 +91,8 @@ router.put("/rename",
 
 router.delete(
   '/:id',
-  [auth,
-    [check("groupID", "Please include the group ID").not().isEmpty()]],
+  [auth
+  ],
   async (req, res) => {
     try {
       // Request Validation
@@ -92,7 +102,10 @@ router.delete(
       }
       let groupID = req.params.id;
 
-      const group = await Group.findById(groupID);
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       let adminID = group.admin;
       let currentUser = req.user.id;
 
@@ -142,18 +155,20 @@ router.put("/leave",
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-
       const { groupID } = req.body;
-      const group = await Group.findById(groupID);
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       const user = await User.findById(req.user.id);
 
       if (!group) {
-        return res.status(500).send("Not a valid group");
+        return res.status(400).send("Not a valid group");
       }
       let memberList = group.members;
 
       if (!user) {
-        return res.status(500).send("Not a valid user");
+        return res.status(400).send("Not a valid user");
       }
       let groupList = user.groups;
 
@@ -203,6 +218,12 @@ router.put("/remove",
 
       const { groupID } = req.body;
       const { userID } = req.body;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
 
@@ -268,6 +289,12 @@ router.put("/addMember",
     try {
       const { userID } = req.body;
       const { groupID } = req.body;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
       let user = await User.findById(userID);
       let groupList = user.groups;
@@ -371,6 +398,11 @@ router.get('/book',
     try {
       const { groupID } = req.body;
       const userID = req.user.id;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       const group = await Group.findById(groupID);
 
       let member = userChecking(group, userID);
@@ -409,6 +441,12 @@ router.get('/previousBooks',
     try {
       const { groupID } = req.body;
       const userID = req.user.id;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
 
       let member = userChecking(group, userID);
@@ -448,6 +486,12 @@ router.put('/book',
     let userID = req.user.id;
     const { groupID } = req.body;
     const { bookID } = req.body;
+
+    let validGroup = groupValidation(groupID)
+    if (!validGroup) {
+      return res.status(500).send("invalid group");
+    }
+
     const group = await Group.findById(groupID);
 
     // check group is real
@@ -498,6 +542,11 @@ router.put('/previousBook',
     let userID = req.user.id;
     const { groupID } = req.body;
     const { bookID } = req.body;
+
+    let validGroup = groupValidation(groupID)
+    if (!validGroup) {
+      return res.status(500).send("invalid group");
+    }
     const group = await Group.findById(groupID);
 
     let member = userChecking(group, userID);
@@ -530,8 +579,17 @@ let userChecking = function (group, userID) {
       member = true;
     }
   }
-
   return member;
+}
+
+let groupValidation = async function (groupID) {
+  try {
+    const group = await Group.findById(groupID);
+    return true;
+  }
+  catch{
+    return false;
+  }
 }
 
 module.exports = router;
