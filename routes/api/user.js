@@ -112,7 +112,7 @@ router.post(
       // Check if user is registered with the request email
       if (!user) {
         return res
-          .status(400)
+          .status(401)
           .json({ errors: [{ msg: "Invalid Credentials" }] });
       }
 
@@ -122,7 +122,7 @@ router.post(
       // If password is not a match send appropriate error
       if (!isMatch) {
         return res
-          .status(400)
+          .status(401)
           .json({ errors: [{ msg: "Invalid Credentials" }] });
       }
 
