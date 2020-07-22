@@ -66,7 +66,7 @@ router.put("/rename",
       const group = await Group.findById(groupID);
       let adminID = group.admin;
       let currentUser = req.user.id;
-      
+
       if (currentUser != adminID) {
         return res.status(500).send("User does not have permission");
       } else 
@@ -88,8 +88,8 @@ router.put("/rename",
 
 router.delete(
   '/:id',
-  [auth,
-    [check("groupID", "Please include the group ID").not().isEmpty()]],
+  [auth
+    ],
   async (req, res) => {
     try {
       // Request Validation
@@ -151,16 +151,21 @@ router.put("/leave",
     try {
 
       const { groupID } = req.body;
+      try{
       const group = await Group.findById(groupID);
+      }
+      catch{
+        return res.status(400).send("Not a valid group");
+      }
       const user = await User.findById(req.user.id);
 
       if (!group) {
-        return res.status(500).send("Not a valid group");
+        return res.status(400).send("Not a valid group");
       }
       let memberList = group.members;
 
       if (!user) {
-        return res.status(500).send("Not a valid user");
+        return res.status(400).send("Not a valid user");
       }
       let groupList = user.groups;
 
