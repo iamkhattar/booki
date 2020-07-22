@@ -64,6 +64,15 @@ router.put("/rename",
 
     try {
       const group = await Group.findById(groupID);
+      let adminID = group.admin;
+      let currentUser = req.user.id;
+
+      console.log(adminID);
+      console.log(currentUser);
+      if (currentUser != adminID) {
+        return res.status(500).send("User does not have permission");
+      } else 
+
       group.name = name;
       await group.save();
       return res.json(group);
