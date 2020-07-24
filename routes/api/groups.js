@@ -101,11 +101,11 @@ router.delete(
         return res.status(400).json({ errors: errors.array() });
       }
       let groupID = req.params.id;
-
       let validGroup = groupValidation(groupID)
       if (!validGroup) {
         return res.status(500).send("invalid group");
       }
+      let group = await Group.findById(groupID);
       let adminID = group.admin;
       let currentUser = req.user.id;
 
