@@ -63,8 +63,18 @@ router.put("/rename",
     const { groupID } = req.body;
 
     try {
-      const group = await Group.findById(groupID);
-      group.name = name;
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+      let adminID = group.admin;
+      let currentUser = req.user.id;
+
+      if (currentUser != adminID) {
+        return res.status(500).send("User does not have permission");
+      } else
+
+        group.name = name;
       await group.save();
       return res.json(group);
     } catch (err) {
@@ -81,13 +91,21 @@ router.put("/rename",
 
 router.delete(
   '/:id',
-  [auth,
-    [check("groupID", "Please include the group ID").not().isEmpty()]],
+  [auth
+  ],
   async (req, res) => {
     try {
+      // Request Validation
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
       let groupID = req.params.id;
 
-      const group = await Group.findById(groupID);
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       let adminID = group.admin;
       let currentUser = req.user.id;
 
@@ -131,19 +149,26 @@ router.put("/leave",
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
-
       const { groupID } = req.body;
-      const group = await Group.findById(groupID);
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       const user = await User.findById(req.user.id);
 
       if (!group) {
-        return res.status(500).send("Not a valid group");
+        return res.status(400).send("Not a valid group");
       }
       let memberList = group.members;
 
       if (!user) {
-        return res.status(500).send("Not a valid user");
+        return res.status(400).send("Not a valid user");
       }
       let groupList = user.groups;
 
@@ -183,10 +208,22 @@ router.put("/remove",
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("userID", "Please include the user ID").not().isEmpty()]
   ], async (req, res) => {
+
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
 
       const { groupID } = req.body;
       const { userID } = req.body;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
 
@@ -240,10 +277,24 @@ router.put("/remove",
 */
 
 router.put("/addMember",
-  auth, async (req, res) => {
+  [auth,
+    [check("groupID", "Please include the group ID").not().isEmpty()],
+    [check("userID", "Please include the user ID").not().isEmpty()]
+  ], async (req, res) => {
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
       const { userID } = req.body;
       const { groupID } = req.body;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
       let user = await User.findById(userID);
       let groupList = user.groups;
@@ -338,23 +389,34 @@ router.get('/book',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
+
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
       const { groupID } = req.body;
       const userID = req.user.id;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
       const group = await Group.findById(groupID);
 
       let member = userChecking(group, userID);
-      if (member){
+      if (member) {
         if (group.currentBook == '{}') {
           return res.status(500).send("No current book");
         }
         else {
           return res.status(200).send(group.currentBook);
         }
-      }else{
+      } else {
         return res.status(500).send("not a member");
       }
-     
+
     } catch{
       return res.status(500).send("server error");
     }
@@ -370,23 +432,35 @@ router.get('/previousBooks',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
+
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
       const { groupID } = req.body;
       const userID = req.user.id;
+
+      let validGroup = groupValidation(groupID)
+      if (!validGroup) {
+        return res.status(500).send("invalid group");
+      }
+
       const group = await Group.findById(groupID);
 
       let member = userChecking(group, userID);
-      if (member){
+      if (member) {
         if (group.currentBook == '{}') {
           return res.status(500).send("No current book");
         }
         else {
           return res.status(200).send(group.previousBooks);
         }
-      }else{
+      } else {
         return res.status(500).send("not a member");
       }
-     
+
     } catch{
       return res.status(500).send("server error");
     }
@@ -403,9 +477,21 @@ router.put('/book',
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("bookID", "Please include the book ID").not().isEmpty()]
   ], async (req, res) => {
+
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     let userID = req.user.id;
     const { groupID } = req.body;
     const { bookID } = req.body;
+
+    let validGroup = groupValidation(groupID)
+    if (!validGroup) {
+      return res.status(500).send("invalid group");
+    }
+
     const group = await Group.findById(groupID);
 
     // check group is real
@@ -447,9 +533,20 @@ router.put('/previousBook',
     [check("groupID", "Please include the group ID").not().isEmpty()],
     [check("bookID", "Please include the book ID").not().isEmpty()]
   ], async (req, res) => {
+
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     let userID = req.user.id;
     const { groupID } = req.body;
     const { bookID } = req.body;
+
+    let validGroup = groupValidation(groupID)
+    if (!validGroup) {
+      return res.status(500).send("invalid group");
+    }
     const group = await Group.findById(groupID);
 
     let member = userChecking(group, userID);
@@ -482,8 +579,17 @@ let userChecking = function (group, userID) {
       member = true;
     }
   }
-
   return member;
+}
+
+let groupValidation = async function (groupID) {
+  try {
+    const group = await Group.findById(groupID);
+    return true;
+  }
+  catch{
+    return false;
+  }
 }
 
 module.exports = router;

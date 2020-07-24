@@ -14,52 +14,92 @@ const router = express.Router();
 */
 
 router.put("/addFriend",
-  auth, async (req, res) => {
+  [auth,
+    [check("userID", "Please include the user's ID").not().isEmpty()],
+    [check("friendID", "Please include the ID of the friend you wish to add").not().isEmpty()]
+  ], async (req, res) => {
+    // Request Validation
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     try {
       const { userID } = req.body;
       const { friendID } = req.body;
-      
-      const friends = await User.findById(userID);
       let user = await User.findById(userID);
       let friendToAdd = await User.findById(friendID);
-
+      let friendsList = user.friends;
       let isFriend = false;
 
+      // loop through users friend list to check if already a friend
       if (userID != friendID) {
-        for (let i = 0; i < friends.length; i++) {
-          if (friends[i].user == friendID) {
+        for (let i = 0; i < friendsList.length; i++) {
+          if (friendsList[i].user == friendID) {
             isFriend = true;
-          } 
+          }
         }
 
         if (!isFriend) {
           // add friend
           user.friends.unshift({ user: friendToAdd._id });
           await user.save();
-          return res.json(friends);
-        } else {
-          return res.status(500).send("Already a friend");
+          return res.json(user.friends);
         }
-      } else {
-        return res.status(600).send("UserID is the same as the FriendID you wish to add")
-      }
-
+        else {
+          return res.status(401).send("Already a friend");
+        }
         res.status(200).json({ success: true });
-      } 
-      
-     catch (e) {
-      res.status(400).json({ msg: e.message, success: false });
+      } else {
+        return res.status(404).send("User ID and friend ID is the same");
+      }
+    } catch (e) {
+      return res.status(500).send("Server Error");
     }
   });
 
 
 /**
- * @route   POST /api/user/friends/remove
+ * @route   Put /api/user/friends/removeFriend
  * @desc    Remove Friend from User
  * @access  Private
  */
-router.post("/remove", (req, res) => {
-  res.send("Remove Friend from User");
+
+router.put("/removeFriend",
+[auth,
+  [ [check("userID", "Please include the user's ID").not().isEmpty()],
+  check("friendID", "Please include the ID of the friend you wish to remove").not().isEmpty()]
+], async (req, res) => {
+
+  // Request Validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const { friendID } = req.body;
+    const { userID } = req.body;
+    const user = await User.findById(userID);
+    let friendsList = user.friends;
+    let isFriend = false;
+
+    for (let i = 0; i < friendsList.length; i++) {
+      if (friendsList[i].user == friendID) {
+        friendsList.splice(i, 1);
+        isFriend = true;
+        await user.save();
+        return res.json(user.friends);
+      }
+    }
+    if (!isFriend) {
+      return res.status(401).send("User is not a friend");
+    }
+    if (userID == friendID) {
+      return res.status(404).send("User ID and friend ID is the same");
+    }
+    res.status(200).json({ success: true });
+  } catch (e) {
+    return res.status(500).send("Server Error");
+  }
 });
 
 module.exports = router;
