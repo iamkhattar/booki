@@ -110,7 +110,7 @@ router.delete(
       let currentUser = req.user.id;
 
       if (currentUser != adminID) {
-        return res.status(500).send("User does not have permission");
+        return res.status(401).send("User does not have permission");
       } else {
 
         // remove the group for all members
@@ -160,6 +160,7 @@ router.put("/leave",
       if (!validGroup) {
         return res.status(500).send("invalid group");
       }
+      let group = Group.findById(groupID);
       const user = await User.findById(req.user.id);
 
       if (!group) {
