@@ -46,21 +46,20 @@ router.put("/addFriend",
           return res.json(user.friends);
         }
         else {
-          return res.status(500).send("Already a friend");
+          return res.status(401).send("Already a friend");
         }
         res.status(200).json({ success: true });
       } else {
-        return res.status(500).send("User ID and friend ID is the same");
+        return res.status(404).send("User ID and friend ID is the same");
       }
-
     } catch (e) {
-      res.status(400).json({ msg: e.message, success: false });
+      return res.status(500).send("Server Error");
     }
   });
 
 
 /**
- * @route   POST /api/user/friends/removeFriend
+ * @route   Put /api/user/friends/removeFriend
  * @desc    Remove Friend from User
  * @access  Private
  */
@@ -92,11 +91,14 @@ router.put("/removeFriend",
       }
     }
     if (!isFriend) {
-      return res.status(500).send("User is not a friend");
+      return res.status(401).send("User is not a friend");
+    }
+    if (userID == friendID) {
+      return res.status(404).send("User ID and friend ID is the same");
     }
     res.status(200).json({ success: true });
   } catch (e) {
-    res.status(400).json({ msg: e.message, success: false });
+    return res.status(500).send("Server Error");
   }
 });
 
