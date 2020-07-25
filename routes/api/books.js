@@ -84,6 +84,10 @@ router.post("/review", [auth,
 router.post("/add", [auth,
   [check("isbn", "Please include the books isbn").not().isEmpty()]]
   , async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
     const { isbn } = req.body;
     let present = await Book.findOne({ isbn: isbn });
 
@@ -105,6 +109,7 @@ router.post("/add", [auth,
  * @access  Public
  */
 router.get("/review", async (req, res) => {
+  
   const { isbn } = req.body;
   let book = await Book.findOne({ isbn: isbn });
 
