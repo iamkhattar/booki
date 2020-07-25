@@ -28,19 +28,19 @@ router.get("/search/:query", async (req, res) => {
  * @desc    Add a Review for a Book
  * @access  Private
  */
-router.post("/review", auth, async (req, res) => {
-  const { description } = req.body;
-  const { rating } = req.body;
-  const { isbn } = req.body;
+router.post("/review", [auth,
+  [check("description", "Please include the books description").not().isEmpty()],
+  [check("rating", "Please include the books rating").not().isEmpty()],
+  [check("isbn", "Please include the books isbn").not().isEmpty()],
+], async (req, res) => {
 
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { description, rating, isbn } = req.body;
   if (rating < 0 || rating > 10) {
     return res.status(500).send("rating must be between 0 and 10");
-  }
-  if (!description) {
-    return res.status(500).send("invalid description");
-  }
-  if (!isbn) {
-    return res.status(500).send("invalid isbn");
   }
   try {
 
@@ -81,19 +81,15 @@ router.post("/review", auth, async (req, res) => {
  * @desc    Add an unseen Book
  * @access  Private
  */
-router.post("/add", auth, async (req, res) => {
+router.post("/add", [auth,
+  [check("isbn", "Please include the books isbn").not().isEmpty()]]
+  , async (req, res) => {
+    const { isbn } = req.body;
+    let present = await Book.findOne({ isbn: isbn });
 
-  const { isbn } = req.body;
-
-  if (!isbn) {
-    return res.status(500).send("Invalid ISBN");
-  }
-
-  let present = await Book.findOne({ isbn: isbn });
-
-  if (present) {
-    res.status(500).json("Book already in system");
-  } else {
+    if (present) {
+      return res.status(500).json("Book already in system");
+    }
     const book = new Book({ isbn });
     try {
       book.save();
@@ -101,18 +97,15 @@ router.post("/add", auth, async (req, res) => {
     } catch (e) {
       return res.status(500).send("Server Error");
     }
-
-  }
-
-});
+  });
 
 /**
  * @route   get /api/books/review
  * @desc    get a Reviews for a Book
  * @access  Public
  */
-router.get("/review",async(req,res) => {
-  const {isbn} = req.body;
+router.get("/review", async (req, res) => {
+  const { isbn } = req.body;
   let book = await Book.findOne({ isbn: isbn });
 
   if (book) {
