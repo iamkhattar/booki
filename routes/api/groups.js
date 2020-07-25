@@ -14,8 +14,9 @@ const User = require("../../models/User");
  */
 router.post(
   "/create",
-  [auth, [check("name", "Please include a group name").not().isEmpty()]],
-  async (req, res) => {
+  [auth,
+    [check("name", "Please include a group name").not().isEmpty()]
+  ], async (req, res) => {
     // Request Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -225,7 +226,7 @@ router.put("/remove",
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
       let admin = false;
-      
+
       let currentUser = req.user.id;
       if (!group) {
         return res.status(500).send("Not a valid group");
@@ -320,7 +321,7 @@ router.put("/addMember",
       await user.save();
       await group.save();
       return res.json(group);
-      
+
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
     }
@@ -366,11 +367,11 @@ router.get(
 
 
 /**
-* @route   GET /api/groups/book
+* @route   POST /api/groups/book
 * @desc    get the current book
 * @access  Private
 */
-router.get('/book',
+router.post('/book',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
@@ -409,15 +410,14 @@ router.get('/book',
 );
 
 /**
-* @route   GET /api/groups/previousBooks
+* @route   POST /api/groups/previousBooks
 * @desc    get the current book
 * @access  Private
 */
-router.get('/previousBooks',
+router.post('/previousBooks',
   [auth,
     [check("groupID", "Please include the group ID").not().isEmpty()]
   ], async (req, res) => {
-
     // Request Validation
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -436,14 +436,14 @@ router.get('/previousBooks',
 
       let member = userChecking(group, userID);
       if (member) {
-        if (group.currentBook == '{}') {
-          return res.status(500).send("No current book");
+        if (group.previousBooks == '{}') {
+          return res.status(500).send("No previous book");
         }
         else {
           return res.status(200).send(group.previousBooks);
         }
       } else {
-        return res.status(500).send("not a member");
+        return res.status(401).send("not a member");
       }
 
     } catch{
@@ -490,7 +490,6 @@ router.put('/book',
       try {
         // find the book
         let book = await Book.findById(bookID);
-        console.log(group.currentBook);
         group.currentBook = { book: book._id };
 
         await group.save();
