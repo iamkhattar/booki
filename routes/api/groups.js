@@ -160,7 +160,7 @@ router.put("/leave",
       if (!validGroup) {
         return res.status(500).send("invalid group");
       }
-      let group = Group.findById(groupID);
+      let group = await Group.findById(groupID);
       const user = await User.findById(req.user.id);
 
       if (!group) {
@@ -183,11 +183,10 @@ router.put("/leave",
         }
       }
       if (!member) {
-        return res.status(500).send("User is not a member of this group");
+        return res.status(401).send("User is not a member of this group");
       }
-
       for (let i = 0; i < memberList.length; i++) {
-        if (memberList[i].user == userID) {
+        if (memberList[i].user == req.user.id) {
           memberList.splice(i, 1);
           await group.save();
         }
@@ -216,7 +215,6 @@ router.put("/remove",
       return res.status(400).json({ errors: errors.array() });
     }
     try {
-
       const { groupID } = req.body;
       const { userID } = req.body;
 
@@ -224,19 +222,17 @@ router.put("/remove",
       if (!validGroup) {
         return res.status(500).send("invalid group");
       }
-
       const group = await Group.findById(groupID);
       const user = await User.findById(userID);
-
       let admin = false;
+      
       let currentUser = req.user.id;
-
       if (!group) {
         return res.status(500).send("Not a valid group");
       }
 
       if (!(currentUser == group.admin)) {
-        return res.status(500).send("not authorised");
+        return res.status(401).send("not authorised");
       }
       let memberList = group.members;
 
@@ -290,7 +286,6 @@ router.put("/addMember",
     try {
       const { userID } = req.body;
       const { groupID } = req.body;
-
       let validGroup = groupValidation(groupID)
       if (!validGroup) {
         return res.status(500).send("invalid group");
@@ -300,10 +295,7 @@ router.put("/addMember",
       let user = await User.findById(userID);
       let groupList = user.groups;
       let member = false;
-
-
       // only a current member should be able to add more members
-
       let currentUser = req.user.id;
       let authorised = false;
 
@@ -312,31 +304,23 @@ router.put("/addMember",
           authorised = true;
         }
       }
-
-      if (authorised) {
-        for (let i = 0; i < groupList.length; i++) {
-          if (groupList[i].group == groupID) {
-            member = true;
-          }
-        }
-
-        if (!member) {
-          // add to group
-          user.groups.unshift({ group: group._id });
-          group.members.unshift({ user: user._id });
-          await user.save();
-          await group.save();
-          return res.json(group);
-        }
-        else {
-          return res.status(500).send("Already a member");
-        }
-
-        res.status(200).json({ success: true });
-      } else {
-        return res.status(500).send("User not authorised to add members to this group");
+      if (!authorised) {
+        return res.status(401).send("User not authorised to add members to this group");
       }
-
+      for (let i = 0; i < groupList.length; i++) {
+        if (groupList[i].group == groupID) {
+          member = true;
+        }
+      }
+      if (member) {
+        return res.status(500).send("Already a member");
+      }
+      user.groups.unshift({ group: group._id });
+      group.members.unshift({ user: user._id });
+      await user.save();
+      await group.save();
+      return res.json(group);
+      
     } catch (e) {
       res.status(400).json({ msg: e.message, success: false });
     }
