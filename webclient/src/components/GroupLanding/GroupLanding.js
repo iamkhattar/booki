@@ -8,6 +8,8 @@ const GroupLanding = () => {
     <div>
       <h1>GroupLanding Page</h1>
       <Link to="/">Landing Page</Link>
+      <br />
+      <Link to="/creategroup">Create Group</Link>
     </div>
   );
 };
