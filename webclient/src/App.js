@@ -13,6 +13,7 @@ import GroupPoll from "./components/GroupPoll/GroupPoll";
 import GroupBookHistory from "./components/GroupBookHistory/GroupBookHistory";
 import Friends from "./components/Friends/Friends";
 import Account from "./components/Account/Account";
+import Search from "./components/Search/Search";
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
       <Switch>
         <Route exact path="/friends" component={Friends} />
         <Route exact path="/account" component={Account} />
+        <Route exact path="/search" component={Search} />
         <Route exact path="/groups" component={GroupLanding} />
         <Route exact path="/creategroup" component={CreateGroup} />
         <Route exact path="/groupdetails" component={GroupDetails} />

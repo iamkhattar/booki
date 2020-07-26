@@ -12,6 +12,8 @@ const Landing = () => {
       <Link to="/friends">Friends Page</Link>
       <br />
       <Link to="/account">Account Page</Link>
+      <br />
+      <Link to="/search">Search Page</Link>
     </div>
   );
 };
