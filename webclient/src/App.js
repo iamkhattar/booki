@@ -11,12 +11,14 @@ import GroupChat from "./components/GroupChat/GroupChat";
 import GroupForum from "./components/GroupForum/GroupForum";
 import GroupPoll from "./components/GroupPoll/GroupPoll";
 import GroupBookHistory from "./components/GroupBookHistory/GroupBookHistory";
+import Friends from "./components/Friends/Friends";
 
 const App = () => {
   return (
     <Router>
       <Route exact path="/" component={Landing} />
       <Switch>
+        <Route exact path="/friends" component={Friends} />
         <Route exact path="/groups" component={GroupLanding} />
         <Route exact path="/creategroup" component={CreateGroup} />
         <Route exact path="/groupdetails" component={GroupDetails} />
