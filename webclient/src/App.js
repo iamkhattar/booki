@@ -9,6 +9,7 @@ import CreateGroup from "./components/CreateGroup/CreateGroup";
 import GroupDetails from "./components/GroupDetails/GroupDetails";
 import GroupChat from "./components/GroupChat/GroupChat";
 import GroupForum from "./components/GroupForum/GroupForum";
+import GroupPoll from "./components/GroupPoll/GroupPoll";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
         <Route exact path="/groupdetails" component={GroupDetails} />
         <Route exact path="/groupchat" component={GroupChat} />
         <Route exact path="/groupforum" component={GroupForum} />
+        <Route exact path="/grouppoll" component={GroupPoll} />
       </Switch>
     </Router>
   );
