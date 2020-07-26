@@ -8,6 +8,7 @@ import GroupLanding from "./components/GroupLanding/GroupLanding";
 import CreateGroup from "./components/CreateGroup/CreateGroup";
 import GroupDetails from "./components/GroupDetails/GroupDetails";
 import GroupChat from "./components/GroupChat/GroupChat";
+import GroupForum from "./components/GroupForum/GroupForum";
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
         <Route exact path="/creategroup" component={CreateGroup} />
         <Route exact path="/groupdetails" component={GroupDetails} />
         <Route exact path="/groupchat" component={GroupChat} />
+        <Route exact path="/groupforum" component={GroupForum} />
       </Switch>
     </Router>
   );
