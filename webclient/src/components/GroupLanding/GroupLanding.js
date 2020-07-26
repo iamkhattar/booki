@@ -10,6 +10,8 @@ const GroupLanding = () => {
       <Link to="/">Landing Page</Link>
       <br />
       <Link to="/creategroup">Create Group</Link>
+      <br />
+      <Link to="/groupdetails">View Group Details</Link>
     </div>
   );
 };
