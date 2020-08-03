@@ -2,7 +2,6 @@ import React from "react";
 import "./Login.css";
 import LoginForm from "./Components/LoginForm";
 import WelcomeMessage from "./Components/WelcomeMessage";
-import { Link } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -21,12 +20,12 @@ const LoginPage = () => {
                     </Col>
                 </Row>
                 <Row>
-                    <Col sm={6}>
+                    <Col md={6}>
                         <WelcomeMessage />
                     </Col>
-                    <Col sm={1}>
+                    <Col md={1}>
                     </Col>
-                    <Col sm={5}>
+                    <Col md={5}>
                         <LoginForm />
                     </Col>
                 </Row>

@@ -1,8 +1,6 @@
 import React from "react";
 import "../Login.css";
-import { useHistory } from "react-router-dom";
 import Jumbotron from 'react-bootstrap/Jumbotron'
-import Button from 'react-bootstrap/Button'
 
 const WelcomeMessage = () => {
     return (
