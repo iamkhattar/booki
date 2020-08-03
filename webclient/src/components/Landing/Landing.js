@@ -7,6 +7,8 @@ const Landing = () => {
   return (
     <div>
       <h1>Landing Page</h1>
+      <Link to="/login">Login Page</Link>
+      <br />
       <Link to="/groups">Groups Home Page</Link>
       <br />
       <Link to="/friends">Friends Page</Link>

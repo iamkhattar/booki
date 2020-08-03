@@ -14,12 +14,14 @@ import GroupBookHistory from "./components/GroupBookHistory/GroupBookHistory";
 import Friends from "./components/Friends/Friends";
 import Account from "./components/Account/Account";
 import Search from "./components/Search/Search";
+import LoginPage from "./components/Login/LoginPage";
 
 const App = () => {
   return (
     <Router>
       <Route exact path="/" component={Landing} />
       <Switch>
+        <Route exact path="/login" component={LoginPage} />
         <Route exact path="/friends" component={Friends} />
         <Route exact path="/account" component={Account} />
         <Route exact path="/search" component={Search} />

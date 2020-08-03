@@ -1,0 +1,29 @@
+
+.heading {
+    margin-top: 1%;
+    margin-bottom: 8vh;
+}
+
+.box {
+    border: black;
+    border-width: 2px;
+}
+
+.image {
+    text-align: left;
+    margin-top: 5rem;
+    float: left;}
+  
+.loginPage{
+    background-color: #a6E0fb;
+    height: 100vh;
+}
+.forgot{
+    font-size: medium;
+    margin: 1rem;
+    text-align: center;
+    text-emphasis: bold;
+}
+.forgotContainer{
+    text-align: center;
+}
