@@ -1,11 +1,9 @@
 import React from "react";
 import "../Login.css";
-import { useHistory } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { Button } from "@material-ui/core";
 
 const LoginForm = () => {
-    const history = useHistory();
     return (
         <div className={'vertical-center'}>
             <div className="forgotContainer">

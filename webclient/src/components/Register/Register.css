@@ -1,0 +1,61 @@
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.content {
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Black w/opacity/see-through */
+    color: white;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 65%;
+    text-align: center;
+}
+
+.background-image {
+    background-image: url(../../assets/landingscreen.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    filter: blur(15px);
+    -webkit-filter: blur(15px);
+    z-index: 1;
+    transform: scale(1.1);
+}
+
+.logo {
+    width: 35vw;
+}
+
+.btn-text {
+    font-weight: bold;
+}
+
+.background-wrapper {
+    overflow: hidden;
+}
+
+.register-wrapper {
+    width: 100vw;
+    height: 100vh;
+}
+
+.link-wrapper {
+    text-decoration: inherit;
+}
+
+.landing-page-button:active {
+    transform: scale(0.98);
+}
+
+.landing-page-button:focus {
+    outline: none;
+}

@@ -15,7 +15,6 @@
 }
 
 .loginPage {
-    background-color: #a6E0fb;
     height: 100vh;
 }
 
@@ -43,12 +42,14 @@ body {
     color: white;
     font-weight: bold;
     position: absolute;
-    top: 60%;
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
     width: 65%;
     text-align: center;
+}
+.loginContent{
+    margin-top: 5%;
 }
 
 .headerContent{
@@ -63,7 +64,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 2;
-    width: 40%;
+    width: 45%;
     text-align: center;
 }
 
