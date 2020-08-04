@@ -16,6 +16,7 @@ import Account from "./components/Account/Account";
 import Search from "./components/Search/Search";
 import LoginPage from "./components/Login/LoginPage";
 import Navbar from "./components/Navbar/Navbar";
+import Register from"./components/Register/Register";
 
 const App = () => {
   return (
@@ -33,6 +34,7 @@ const App = () => {
         <Route exact path="/groupforum" component={GroupForum} />
         <Route exact path="/grouppoll" component={GroupPoll} />
         <Route exact path="/groupbookhistory" component={GroupBookHistory} />
+        <Route exact path="/register" component={Register} />
       </Switch>
     </Router>
   );
