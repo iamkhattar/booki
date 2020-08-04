@@ -2,30 +2,26 @@ import React from "react";
 import "./Login.css";
 import LoginForm from "./Components/LoginForm";
 import WelcomeMessage from "./Components/WelcomeMessage";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Image from "react-bootstrap/Image";
 
 const LoginPage = () => {
   return (
     <div className="loginPage">
-      <Container>
-        <Row>
-          <Col className="text-center heading">
-            <Image width="40%" src={require("../../assets/cover.png")} fluid />
-          </Col>
-        </Row>
-        <Row>
-          <Col md={6}>
+      <div className="container">
+        <div className="row">
+          <div className="col text-center heading">
+            <img width="40%" class = "img" src={require("../../assets/cover.png")} fluid />
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-md-5">
             <WelcomeMessage />
-          </Col>
-          <Col md={1}></Col>
-          <Col md={5}>
+          </div>
+          <div className="col-md-2"></div>
+          <div className="col-md-5">
             <LoginForm />
-          </Col>
-        </Row>
-      </Container>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
