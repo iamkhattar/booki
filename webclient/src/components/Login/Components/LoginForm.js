@@ -1,8 +1,8 @@
 import React from "react";
 import "../Login.css";
 import { useHistory } from "react-router-dom";
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
+import { Link } from "react-router-dom";
+import { Button } from "@material-ui/core";
 
 const LoginForm = () => {
     const history = useHistory();
@@ -12,30 +12,32 @@ const LoginForm = () => {
                 <h2>Member Login</h2>
             </div>
 
-            <Form>
-                <Form.Group controlId="email">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control type="email" placeholder="Enter email" />
-                </Form.Group>
+            <div className="form-group">
+                <div>
+                    <label>Email address</label>
+                    <input type="text" className="form-control" id="email" placeholder="Enter email" />
+                </div>
 
-                <Form.Group controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control type="password" placeholder="Password" />
-                </Form.Group>
+                <div>
+                    <label>Password</label>
+                    <input type="password" className="form-control" id="password" placeholder="Password" />
+                </div>
 
-                <Button
-                    variant="primary"
-                    type="submit"
-                    block
-                    onClick={() => { history.push('/') }}
-                >
+                <br />
 
-                    Login
-                </Button>
+                <Link to="/" style={{ textDecoration: "none" }}>
+                    <Button
+                        variant="contained"
+                        size="large"
+                        className="h-100 w-100 landing-page-button"
+                    >
+                        <div className="btn-text">LOGIN</div>
+                    </Button>
+                </Link>
                 <div className="forgotContainer">
                     <a href="" className="forgot"> Forgot Username/Password?</a>
                 </div>
-            </Form>
+            </div>
         </div>
     );
 };
