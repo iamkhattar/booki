@@ -15,6 +15,7 @@ import Friends from "./components/Friends/Friends";
 import Account from "./components/Account/Account";
 import Search from "./components/Search/Search";
 import LoginPage from "./components/Login/LoginPage";
+import Navbar from "./components/Navbar/Navbar";
 
 const App = () => {
   return (
